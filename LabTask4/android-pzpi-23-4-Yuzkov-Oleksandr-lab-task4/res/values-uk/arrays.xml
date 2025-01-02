@@ -1,0 +1,7 @@
+<resources>
+    <string-array name="importance_levels">
+        <item>Низька</item>
+        <item>Середня</item>
+        <item>Висока</item>
+    </string-array>
+</resources>
