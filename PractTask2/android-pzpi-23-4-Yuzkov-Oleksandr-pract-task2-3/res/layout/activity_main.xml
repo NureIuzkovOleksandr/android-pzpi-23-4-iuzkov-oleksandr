@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/headerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Життєвий цикл Activity"
+        android:textSize="24sp"
+        android:textColor="@android:color/holo_blue_dark"
+        android:layout_gravity="center" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Введіть текст"
+        android:padding="8dp"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/counterText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Counter: 0"
+        android:textSize="20sp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/incrementButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Збільшити лічильник"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/timerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Timer: 0s"
+        android:textSize="20sp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/openSecondActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Відкрити друге Activity"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/finishActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Завершити Activity"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"/>
+
+</LinearLayout>
