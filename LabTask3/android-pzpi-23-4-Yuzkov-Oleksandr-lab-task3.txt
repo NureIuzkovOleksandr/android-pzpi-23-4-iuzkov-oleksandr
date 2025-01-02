@@ -1,0 +1,809 @@
+МІНІСТЕРСТВО ОСВІТИ І НАУКИ УКРАЇНИ
+ХАРКІВСЬКИЙ НАЦІОНАЛЬНИЙ УНІВЕРСИТЕТ РАДІОЕЛЕКТРОНІКИ
+
+
+КАФЕДРА ПРОГРАМНОЇ ІНЖЕНЕРІЇ
+
+
+
+
+Звіт
+з лабораторної роботи № 3 з дисципліни
+Програмування під Android
+   
+
+
+
+
+
+Виконав:                                                                           Перевірив:
+ст. гр. ПЗПІ-23-4                        				ст. викладач кафедри ПІ
+Юзков Олександр						Сокорчук Ігор Петрович
+
+
+
+
+
+
+
+
+
+Харків 2024 
+ЗАВДАННЯ
+
+Розробити калькулятор на 4 базові арифметичні операції з кнопками для введення аргументів і дій.
+Калькулятор повинен мати адаптивний користувацький інтерфейс у різних орієнтаціях екрану та на екранах різної роздільної здатності.
+ 
+ХІД РОБОТИ
+
+Cтворюємо новий проєкт та обираємо Empty Views Activity.
+Спочатку створюємо розмітку для портретної та ландшафтної орієнтацій, щоб забезпечити зручне відображення кнопок та полів введення. Відкриваємо файл activity_main.xml та додаємо компоненти для відображення чисел і операцій.
+Розмітка побудована на базі ConstraintLayout, що дозволяє зручно прив’язувати елементи один до одного. Відображення результату та операції реалізовано через TextView, а для введення чисел використано два EditText".
+Поле для виведення результату:
+<TextView
+    android:id="@+id/resultView"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:textSize="20sp"
+    android:gravity="center"
+    android:background="#E8EAF6"
+    android:padding="12dp"
+    android:textColor="#000"
+    android:text="Результат"
+    app:layout_constraintTop_toBottomOf="@id/secondNumberField"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:layout_marginTop="12dp" />
+
+Поле для виведення операції:
+<TextView
+    android:id="@+id/operationView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="24sp"
+    android:gravity="center"
+    android:text="Операція"
+    android:padding="8dp"
+    app:layout_constraintTop_toBottomOf="@id/firstNumberField"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:layout_marginTop="8dp" />
+
+Поле для введення чисел:
+<EditText
+    android:id="@+id/firstNumberField"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:inputType="numberDecimal"
+    android:hint="Введіть перше число"
+    android:textSize="16sp"
+    android:padding="8dp"
+    android:backgroundTint="#D1C4E9"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.5" />
+
+Блок кнопок організовано у GridLayout. Тож ми отримали гарну та зручну розмітку [ДОДАТОК А].
+Для ландшафтного відображення будо змінено розположення елементів. Кнопки при ландшафтній орієнтації розташовані справа, а поля результатів зліва [ДОДАТОК Б]. 
+Переходимо до функціональної частини. 
+Першим кроком ініціалізація змінних:
+private EditText firstNumberField;
+private EditText secondNumberField;
+private TextView resultView;
+private TextView operationView;
+
+private Double firstOperand = null;
+private Double secondOperand = null;
+
+
+Далі йде обробка подій натискання кнопок за допомогою слухачів: 
+findViewById(R.id.addButton).setOnClickListener(view -> handleOperationClick("+"));
+findViewById(R.id.subtractButton).setOnClickListener(view -> handleOperationClick("-"));
+findViewById(R.id.multiplyButton).setOnClickListener(view -> handleOperationClick("*"));
+findViewById(R.id.divideButton).setOnClickListener(view -> handleOperationClick("/"));
+findViewById(R.id.equalsButton).setOnClickListener(view -> handleOperationClick("="));
+Створюємо логіку обробки числових та операційних кнопок та виконання розрахунків залежно від вибраної операції [ДОДАТОК В].
+Всі змінні зберігаються та відновлюються у Bundle за допомогою методів onSaveInstanceState та onRestoreInstanceState.
+Збереження стану:
+@Override
+protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+
+    outState.putString("FIRST_NUMBER", firstNumberField.getText().toString());
+    outState.putString("SECOND_NUMBER", secondNumberField.getText().toString());
+
+    outState.putString("OPERATION", operationView.getText().toString());
+
+    outState.putString("RESULT", resultView.getText().toString());
+}
+
+Відновлення стану:
+@Override
+protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
+
+    String firstNumber = savedInstanceState.getString("FIRST_NUMBER");
+    String secondNumber = savedInstanceState.getString("SECOND_NUMBER");
+
+    String operation = savedInstanceState.getString("OPERATION");
+
+    String result = savedInstanceState.getString("RESULT");
+
+    firstNumberField.setText(firstNumber);
+    secondNumberField.setText(secondNumber);
+    operationView.setText(operation);
+    resultView.setText(result);
+
+    if (!TextUtils.isEmpty(firstNumber)) {
+        try {
+            firstOperand = Double.parseDouble(firstNumber.replace(',', '.'));
+        } catch (NumberFormatException e) {
+            firstOperand = null;
+        }
+    }
+
+    if (!TextUtils.isEmpty(secondNumber)) {
+        try {
+            secondOperand = Double.parseDouble(secondNumber.replace(',', '.'));
+        } catch (NumberFormatException e) {
+            secondOperand = null;
+        }
+    }
+}
+ 
+ВИСНОВКИ
+
+Під час лабораторної роботи було створено додаток простого калькулятора на 4 базові дії, закріплено знання з обробки подій при використанні кнопок, обчислення записаних з кнопок змінних та відображення результату на екрані.
+Посилання на відеозвіт завантажений на YouTube. URL: https://youtu.be/mOaB3Rg_v2w
+
+ 
+ВИКОРИСТАНІ ДЖЕРЕЛА
+
+1.	Документація JavaRush switch-case. URL: https://javarush.com/en/groups/posts/en..switch-statement-in-java  (дата звернення: 27.11.2024)
+2.	Документація JavaRush replacing strings in java. URL: https://javarush.com/en/groups/posts/en.2845.replace-string-in-java (дата звернення: 27.11.2024)
+ 
+ДОДАТОК А
+
+Файл портретної орієнтації.
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#F5F5F5">
+
+    <EditText
+        android:id="@+id/firstNumberField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="Введіть перше число"
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:backgroundTint="#D1C4E9"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5" />
+
+    <TextView
+        android:id="@+id/operationView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:text="Операція"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/firstNumberField"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <EditText
+        android:id="@+id/secondNumberField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="Введіть друге число"
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:backgroundTint="#D1C4E9"
+        app:layout_constraintTop_toBottomOf="@id/operationView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        app:layout_constraintHorizontal_bias="0.5" />
+
+    <TextView
+        android:id="@+id/resultView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:background="#E8EAF6"
+        android:padding="12dp"
+        android:textColor="#000"
+        android:text="Результат"
+        app:layout_constraintTop_toBottomOf="@id/secondNumberField"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp" />
+
+
+    <GridLayout
+        android:id="@+id/buttonPanel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:rowCount="4"
+        android:columnCount="4"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/resultView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:id="@+id/button7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:text="7"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/button8"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:text="8"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/button9"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:text="9"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/divideButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:text="/"
+            android:textColor="#FFF"
+            android:backgroundTint="#AB47BC" />
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:text="4"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:text="5"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/button6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:text="6"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/multiplyButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:text="*"
+            android:textColor="#FFF"
+            android:backgroundTint="#AB47BC" />
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:text="1"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:text="2"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:text="3"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/subtractButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:text="-"
+            android:textColor="#FFF"
+            android:backgroundTint="#AB47BC" />
+
+        <Button
+            android:id="@+id/button0"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:text="0"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+                android:id="@+id/decimalButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:text=","
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/addButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:text="+"
+            android:textColor="#FFF"
+            android:backgroundTint="#AB47BC" />
+
+        <Button
+            android:id="@+id/equalsButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:text="="
+            android:textColor="#FFF"
+            android:backgroundTint="#AB47BC" />
+    </GridLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+	
+ДОДАТОК Б
+
+Файл ландшафтної розмітки
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#F5F5F5">
+
+    <GridLayout
+        android:id="@+id/buttonPanel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:columnCount="4"
+        android:rowCount="4"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/firstNumberField"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <Button
+            android:id="@+id/button7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="7"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/button8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="8"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/button9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="9"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/divideButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/"
+            android:textColor="#FFF"
+            android:backgroundTint="#AB47BC" />
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/button6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="6"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/multiplyButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="*"
+            android:textColor="#FFF"
+            android:backgroundTint="#AB47BC" />
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/subtractButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:textColor="#FFF"
+            android:backgroundTint="#AB47BC" />
+
+        <Button
+            android:id="@+id/button0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/decimalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=","
+            android:textColor="#FFF"
+            android:backgroundTint="#7E57C2" />
+
+        <Button
+            android:id="@+id/addButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:textColor="#FFF"
+            android:backgroundTint="#AB47BC" />
+
+        <Button
+            android:id="@+id/equalsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="="
+            android:textColor="#FFF"
+            android:backgroundTint="#AB47BC" />
+    </GridLayout>
+
+    <EditText
+        android:id="@+id/firstNumberField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="Введіть перше число"
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:backgroundTint="#D1C4E9"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/buttonPanel"
+        app:layout_constraintHorizontal_bias="0.5" />
+
+    <TextView
+        android:id="@+id/operationView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:text="Операція"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/firstNumberField"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/buttonPanel"
+        android:layout_marginTop="8dp" />
+
+    <EditText
+        android:id="@+id/secondNumberField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="Введіть друге число"
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:backgroundTint="#D1C4E9"
+        app:layout_constraintTop_toBottomOf="@id/operationView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/buttonPanel"
+        android:layout_marginTop="8dp"
+        app:layout_constraintHorizontal_bias="0.5" />
+
+    <TextView
+        android:id="@+id/resultView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:background="#E8EAF6"
+        android:padding="12dp"
+        android:textColor="#000"
+        android:text="Результат"
+        app:layout_constraintTop_toBottomOf="@id/secondNumberField"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/buttonPanel"
+        android:layout_marginTop="12dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+ДОДАТОК В
+
+Файл функціональної частини MainActivity
+
+package yuzkov.oleksandr.nure;
+
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText firstNumberField;
+    private EditText secondNumberField;
+    private TextView resultView;
+    private TextView operationView;
+
+    private Double firstOperand = null;
+    private Double secondOperand = null;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        initializeViews();
+        setupListeners();
+    }
+
+    private void initializeViews() {
+        firstNumberField = findViewById(R.id.firstNumberField);
+        secondNumberField = findViewById(R.id.secondNumberField);
+        resultView = findViewById(R.id.resultView);
+        operationView = findViewById(R.id.operationView);
+    }
+
+    private void setupListeners() {
+        setNumberListeners();
+        setOperationListeners();
+    }
+
+    private void setNumberListeners() {
+        int[] numberButtonIds = {
+                R.id.button0, R.id.button1, R.id.button2, R.id.button3, R.id.button4,
+                R.id.button5, R.id.button6, R.id.button7, R.id.button8, R.id.button9,
+                R.id.decimalButton
+        };
+
+        for (int id : numberButtonIds) {
+            findViewById(id).setOnClickListener(view -> handleNumberClick(((Button) view).getText().toString()));
+        }
+    }
+
+    private void setOperationListeners() {
+        findViewById(R.id.addButton).setOnClickListener(view -> handleOperationClick("+"));
+        findViewById(R.id.subtractButton).setOnClickListener(view -> handleOperationClick("-"));
+        findViewById(R.id.multiplyButton).setOnClickListener(view -> handleOperationClick("*"));
+        findViewById(R.id.divideButton).setOnClickListener(view -> handleOperationClick("/"));
+        findViewById(R.id.equalsButton).setOnClickListener(view -> handleOperationClick("="));
+    }
+
+    private void handleNumberClick(String number) {
+        if (firstNumberField.isFocused()) {
+            firstNumberField.append(number);
+        } else if (secondNumberField.isFocused()) {
+            secondNumberField.append(number);
+        }
+    }
+
+    private void handleOperationClick(String operation) {
+        String firstNumber = firstNumberField.getText().toString();
+        String secondNumber = secondNumberField.getText().toString();
+
+        if (!operation.equals("=")) {
+            operationView.setText(operation);
+        }
+
+        if (!TextUtils.isEmpty(firstNumber)) {
+            try {
+                firstOperand = Double.parseDouble(firstNumber.replace(',', '.'));
+            } catch (NumberFormatException e) {
+                firstOperand = null;
+            }
+        }
+
+        if (!TextUtils.isEmpty(secondNumber)) {
+            try {
+                secondOperand = Double.parseDouble(secondNumber.replace(',', '.'));
+            } catch (NumberFormatException e) {
+                secondOperand = null;
+            }
+        }
+
+        if (operation.equals("=")) {
+            if ((firstOperand == null || secondOperand == null) || TextUtils.isEmpty(firstNumber) || TextUtils.isEmpty(secondNumber)) {
+                resultView.setText("Невірний ввід");
+                return;
+            }
+
+            performCalculation(firstOperand, secondOperand);
+        }
+    }
+
+    private void performCalculation(Double firstOperand, Double secondOperand) {
+        Double result = null;
+        String currentOperation = operationView.getText().toString();
+
+        switch (currentOperation) {
+            case "+":
+                result = firstOperand + secondOperand;
+                break;
+            case "-":
+                result = firstOperand - secondOperand;
+                break;
+            case "*":
+                result = firstOperand * secondOperand;
+                break;
+            case "/":
+                if (secondOperand != 0) {
+                    result = firstOperand / secondOperand;
+                } else {
+                    resultView.setText("Помилка: Ділення на нуль");
+                    return;
+                }
+                break;
+        }
+
+        if (result != null) {
+            resultView.setText(String.valueOf(result).replace('.', ','));
+        }
+
+        firstNumberField.setText("");
+        secondNumberField.setText("");
+        operationView.setText("");
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString("FIRST_NUMBER", firstNumberField.getText().toString());
+        outState.putString("SECOND_NUMBER", secondNumberField.getText().toString());
+
+        outState.putString("OPERATION", operationView.getText().toString());
+
+        outState.putString("RESULT", resultView.getText().toString());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        String firstNumber = savedInstanceState.getString("FIRST_NUMBER");
+        String secondNumber = savedInstanceState.getString("SECOND_NUMBER");
+
+        String operation = savedInstanceState.getString("OPERATION");
+
+        String result = savedInstanceState.getString("RESULT");
+
+        firstNumberField.setText(firstNumber);
+        secondNumberField.setText(secondNumber);
+        operationView.setText(operation);
+        resultView.setText(result);
+
+        if (!TextUtils.isEmpty(firstNumber)) {
+            try {
+                firstOperand = Double.parseDouble(firstNumber.replace(',', '.'));
+            } catch (NumberFormatException e) {
+                firstOperand = null;
+            }
+        }
+
+        if (!TextUtils.isEmpty(secondNumber)) {
+            try {
+                secondOperand = Double.parseDouble(secondNumber.replace(',', '.'));
+            } catch (NumberFormatException e) {
+                secondOperand = null;
+            }
+        }
+    }
+
+}
+
