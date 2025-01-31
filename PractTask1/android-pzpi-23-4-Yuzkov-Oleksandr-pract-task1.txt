@@ -72,15 +72,17 @@
 Відкрийте файл activity_main.xml у редакторі та додайте новий елемент інтерфейсу [ДОДАТОК А]
 
 У файлі MainActivity.java додайте обробку натискання на кнопку: - Знайдіть кнопку за її ідентифікатором за допомогою методу findViewById(). Додайте обробник натискання за допомогою методу setOnClickListener(), що змінюватиме текст на кнопці:
-1. Button btn1 = findViewById(R.id.pressBtn);
-2. TextView txt = findViewById(R.id.txt1);
-3. EditText editTxt = findViewById(R.id.editText);
-4. btn1.setOnClickListener(new View.OnClickListener(){
-5.	 @Override
-6.	 public void onClick(View v) {
-7.	 	txt.setText(editTxt.getText());
-8.	 }
-9. });
+
+button = findViewById(R.id.button);
+button.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        String originalText = textView.getText().toString();
+        String reversedText = new StringBuilder(originalText).reverse().toString();
+        textView.setText(reversedText);
+    }
+});
+
 
 3.	Створення GitHub репозиторію та публікація коду застосунку
 Перейдіть на GitHub та створіть свій акаунт згідно із вимогами. Відкрийте ваш Android-застосунок в Android Studio. Ініціалізуйте Git у вашому проєкті: Відкрийте VCS -> Enable Version Control Integration. У випадаючому меню оберіть Git.
@@ -91,7 +93,7 @@
 У результаті виконання практичного завдання був розроблений базовий Android застосунок. Головною метою роботи було ознайомлення з середовищем Android Studio та основними принципами створення мобільних додатків.
 Під час розробки проекту була вивчена структура Android застосунку. Зокрема, реалізовано обробник подій для кнопки, що дозволяє змінювати текст у текстовому полі.
 Завдяки виконанню цього завдання вдалося ознайомитися з основами програмування для Android, а також отримати практичний досвід у створенні та налагодженні мобільних додатків.
-Посилання на відеозвіт опублікований на YouTube. URL: https://youtu.be/ro3BYX7WKw0  
+Посилання на відеозвіт опублікований на YouTube. URL: https://youtu.be/3k6Y1xzIws4 
 Використані джерела
 
 1.	Методичні вказівки до практичних занять: Створення мінімального Android застосунку. URL: https://dl.nure.ua/mod/page/view.php?id=599539 (дата звернення: 01.11.2024)
@@ -120,50 +122,26 @@
 
 Файл розмітки.
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical"
+    android:gravity="center">
 
     <TextView
-        android:id="@+id/txt1"
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.537" />
+        android:text="Певний текст"
+        android:textSize="24sp"
+        android:textColor="#000000"
+        android:padding="10dp"/>
 
     <Button
-        android:id="@+id/pressBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:insetLeft="4dp"
-        android:insetRight="4dp"
-        android:text="Press me"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt1" />
-
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/holo_blue_light"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Andrew Tsyselkyi"
-        app:layout_constraintBottom_toTopOf="@+id/txt1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:id="@+id/button"
+        android:layout_width="170dp"
+        android:layout_height="70dp"
+        android:text="Натисніть мене"/>
+</LinearLayout>
 
